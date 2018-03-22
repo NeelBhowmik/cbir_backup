@@ -1,0 +1,32 @@
+#!/bin/usr/env bash
+
+if [ ! $# = "2" ]; then
+	echo ""
+	echo "USAGE: bash checkdetfile.sh <dataset> <detec>"
+	echo " dataset    name of the image dataset"
+	echo " detec      list of detectors to use (e.g.: this way -> hesaff-mser)"
+	echo ""
+	exit
+fi
+
+dataset="$1"
+detec="$2"
+detec_info=0.5_Detectors/data/$dataset/${detec}_info.dat
+echo "Check detector file: "
+
+for folder in 0.5_Detectors/data/$dataset/$detec/*; do
+	class=$(basename $folder)
+	echo "Computing for $class class."
+	for img in $folder/*; do
+		base=$(basename $img .kp)
+		#echo $img
+		#kpfile=0.5_Detectors/data/$dataset/$detec/$class/$img
+		#kpcnt=`sed -n 2p img`
+		kpcnt=$(wc -l < $img)
+		#echo $kpcnt
+		if [[ $kpcnt -lt "3" ]]; then
+			echo $base >> $detec_info				
+		fi			
+	done
+done
+echo "Completed."
